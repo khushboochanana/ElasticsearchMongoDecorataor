@@ -1,8 +1,8 @@
-const elasticsearch = require('elasticsearch')
-const config = require('../config')
+import elasticsearch from 'elasticsearch'
 
-let elasticClient = new elasticsearch.Client({
-  host: config.elastic.url
-})
-
-export { elasticClient }
+export default class ElasticClient {
+  client = null
+  constructor (clientConfig) {
+    this.client = new elasticsearch.Client(clientConfig)
+  }
+}

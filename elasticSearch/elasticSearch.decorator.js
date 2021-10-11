@@ -1,17 +1,16 @@
-import { createIndex, indexExists } from './elasticSearch.service.js'
 import { dataTypeMapping } from './mongoToElasticTypeMapping.js'
 
-export function ElasticIndex ({
-  model,
-  name,
-  exclude,
-  include,
-  mappings,
-  settings
-}) {
-  console.log('Elastic index name: ' + name)
+export function EsIndex (
+  ElasticSearchHelper,
+  { model, name, exclude, include, mappings, settings }
+) {
+  console.log('Elastic index name: ' + name, ElasticSearchHelper)
+  if (!ElasticSearchHelper) {
+    console.log('Please initialze the elasticsearch  ')
+  }
+
   return function decorator (t) {
-    indexExists(name).then(exists => {
+    ElasticSearchHelper.indexExists(name).then(exists => {
       if (!exists) {
         let mapping = {}
         if (mappings && Object.keys(mappings).length) {
@@ -19,9 +18,11 @@ export function ElasticIndex ({
         } else {
           mapping = getMongoFields({ model, exclude, include })
         }
-        createIndex({ name, mapping, settings }).then(function (data) {
-          console.log('CREATED Index For : ' + name)
-        })
+        ElasticSearchHelper.createIndex({ name, mapping, settings }).then(
+          function (data) {
+            console.log('CREATED Index For : ' + name)
+          }
+        )
       }
     })
   }
